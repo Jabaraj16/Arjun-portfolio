@@ -46,28 +46,58 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [navigation]);
 
-  const handleNavClick = (e, href) => {
-    e.preventDefault();
-    setMobileMenuOpen(false);
-    const targetId = href.substring(1);
-    const element = document.getElementById(targetId);
-    if (element) {
-      const offset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - offset;
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth',
-      });
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleNavClick = (e, href) => {
+    if (href && href.startsWith('#')) {
+      e.preventDefault();
+      const targetId = href.substring(1);
+      setMobileMenuOpen(false);
+
+      setTimeout(() => {
+        const element = document.getElementById(targetId);
+        if (element) {
+          const navOffset = 75;
+          const bodyRect = document.body.getBoundingClientRect().top;
+          const elementRect = element.getBoundingClientRect().top;
+          const elementPosition = elementRect - bodyRect;
+          const offsetPosition = elementPosition - navOffset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth',
+          });
+        } else {
+          window.location.hash = href;
+        }
+      }, 60);
     }
   };
 
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-40 transition-all duration-300 ${
-        scrolled
-          ? 'bg-white/90 dark:bg-navy-950/90 backdrop-blur-md shadow-sm border-b border-slate-200/80 dark:border-slate-800/80 py-3.5'
+        scrolled || mobileMenuOpen
+          ? 'bg-white/95 dark:bg-[#070D18]/95 backdrop-blur-md shadow-sm border-b border-slate-200/80 dark:border-slate-800/80 py-3.5'
           : 'bg-transparent py-5'
       }`}
     >
@@ -161,9 +191,11 @@ const Navbar = () => {
             </button>
 
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              type="button"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
               aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
-              className="p-2 sm:p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              aria-expanded={mobileMenuOpen}
+              className="relative z-50 p-2 sm:p-2.5 rounded-lg border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 active:scale-95 transition-all"
             >
               {mobileMenuOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
             </button>
@@ -171,17 +203,26 @@ const Navbar = () => {
         </div>
       </div>
 
+      {/* Mobile Menu Backdrop */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-slate-950/40 backdrop-blur-xs -z-10 lg:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Mobile Menu Dropdown */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25, ease: 'easeInOut' }}
-            className="lg:hidden bg-white/98 dark:bg-navy-950/98 backdrop-blur-xl border-b border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="lg:hidden absolute top-full left-0 right-0 bg-white dark:bg-[#0b1329] border-b border-slate-200 dark:border-slate-800 shadow-2xl z-40"
           >
-            <div className="px-4 pt-3 pb-6 space-y-1.5 max-h-[calc(100dvh-5rem)] overflow-y-auto">
+            <div className="px-4 pt-3 pb-6 space-y-1.5 max-h-[calc(100vh-5rem)] overflow-y-auto">
               {navigation.map((item) => {
                 const isActive = activeSection === item.href.substring(1);
                 return (
@@ -189,10 +230,10 @@ const Navbar = () => {
                     key={item.name}
                     href={item.href}
                     onClick={(e) => handleNavClick(e, item.href)}
-                    className={`flex items-center min-h-[44px] px-3.5 py-2.5 rounded-xl text-base font-medium transition-colors ${
+                    className={`flex items-center min-h-[44px] px-3.5 py-2.5 rounded-xl text-base font-medium transition-colors cursor-pointer ${
                       isActive
                         ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-semibold'
-                        : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800'
+                        : 'text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60 active:bg-slate-200 dark:active:bg-slate-700'
                     }`}
                   >
                     {item.name}
@@ -204,7 +245,7 @@ const Navbar = () => {
                 <a
                   href={personalInfo.resumeUrl}
                   download={personalInfo.resumeFileName}
-                  className="flex items-center justify-center space-x-2 w-full min-h-[44px] px-4 py-3 rounded-xl bg-blue-700 text-white font-medium shadow-sm hover:bg-blue-800 transition-colors"
+                  className="flex items-center justify-center space-x-2 w-full min-h-[44px] px-4 py-3 rounded-xl bg-blue-700 text-white font-medium shadow-sm hover:bg-blue-800 active:bg-blue-900 transition-colors"
                 >
                   <Download className="w-4 h-4" />
                   <span>Download Resume (PDF)</span>
