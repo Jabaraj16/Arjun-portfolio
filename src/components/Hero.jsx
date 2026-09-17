@@ -55,14 +55,14 @@ const Hero = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-12 lg:gap-10 items-center">
           
-          {/* Left Column: Headline, Title, Narrative, Buttons */}
+          {/* Left Column on desktop, Second on mobile: Headline, Title, Narrative, Buttons */}
           <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
-            className="lg:col-span-7 space-y-6 text-center lg:text-left"
+            className="order-2 lg:order-1 lg:col-span-7 space-y-6 text-center lg:text-left"
           >
             {/* Status Pill */}
             <div className="inline-flex items-center space-x-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200/80 dark:border-blue-800/60 text-blue-800 dark:text-blue-300 text-xs font-semibold tracking-wide shadow-sm max-w-full">
@@ -200,12 +200,12 @@ const Hero = () => {
             </div>
           </motion.div>
 
-          {/* Right Column: Arjun R's Professional Profile Photo in Clean Circular Frame */}
+          {/* Right Column on desktop, First on mobile: Profile Photo in Clean Circular Frame */}
           <motion.div
             initial={{ opacity: 0, scale: 0.92 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
-            className="lg:col-span-5 flex flex-col items-center justify-center relative mt-4 lg:mt-0"
+            transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
+            className="order-1 lg:order-2 lg:col-span-5 flex flex-col items-center justify-center relative my-2 sm:my-4 lg:my-0"
           >
             {/* Outer Circular Frame with subtle border and soft shadows */}
             <div className="relative p-2.5 sm:p-3 rounded-full bg-gradient-to-b from-slate-200/80 via-white to-slate-200/60 dark:from-slate-700/80 dark:via-navy-900 dark:to-slate-800/80 shadow-2xl max-w-full">
