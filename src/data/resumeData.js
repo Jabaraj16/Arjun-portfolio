@@ -100,7 +100,7 @@ export const resumeData = {
       id: "luxon-tata",
       company: "Luxon Tata",
       location: "Kollam, Kerala",
-      role: "Accountant Executive",
+      role: "Senior Accountant",
       period: "April 2024 – Present",
       isCurrent: true,
       description: "Managing corporate financial recording, statutory tax compliance, and executive financial reporting.",

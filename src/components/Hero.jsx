@@ -16,7 +16,7 @@ const Hero = () => {
   const { personalInfo } = resumeData;
 
   const workTitles = [
-    'Accountant Executive',
+    'Senior Accountant',
     'SAP FICO Specialist',
     'GST & Tax Compliance Analyst',
     'Financial Modeling & Reporting',
@@ -67,7 +67,7 @@ const Hero = () => {
             {/* Status Pill */}
             <div className="inline-flex items-center space-x-2 px-3 sm:px-3.5 py-1.5 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200/80 dark:border-blue-800/60 text-blue-800 dark:text-blue-300 text-xs font-semibold tracking-wide shadow-sm max-w-full">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-              <span className="truncate">Available for Executive &amp; Accounting Roles</span>
+              <span className="truncate">Available for Accounting Roles</span>
             </div>
 
             {/* Main Name with Glowing Effect & Animated Work Title */}
